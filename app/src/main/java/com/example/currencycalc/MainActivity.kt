@@ -6,12 +6,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.*
+import java.io.IOException
 
 fun button2ClickHandler(v:View){
     Log.d("TAG1", "button2 was pr")
 }
 
 class MainActivity : AppCompatActivity() {
+
+    private val client = OkHttpClient()
 
     private fun button3ClickHandler(v:View){
         Log.d("TAG1", "button 3 was p")
@@ -38,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         //Log.d("TAG", "our text == ${et.text}")
       //  et.setText("newText")
     //    editText2.setText("new way hahaha")
-        button3.setText("1")
+        button3.text = "1"
         button.setOnClickListener { Log.d("TAG1", "button1 was pressed") }
         toConverterButton.setOnClickListener(::button2ClickHandler)
         button3.setOnClickListener(this::button3ClickHandler)
@@ -48,6 +52,28 @@ class MainActivity : AppCompatActivity() {
             val myIntent = Intent(this, ConverterActivity::class.java)
             startActivity(myIntent)
         }
+
+        run("http://www.cbr.ru/scripts/XML_daily.asp?date_req=12.07.2012")
+        Log.d("REU", "after run")
+
+    }
+
+    fun run(url: String) {
+        Log.d("REU", "in run before req")
+
+        val request = Request.Builder()
+            .url(url)
+            .build()
+        Log.d("REU", "in run after req")
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("REU", "in exception")
+            }
+            override fun onResponse(call: Call, response: Response)
+            {Log.d("REU", "${response.body()?.string()}")}
+        })
+        Log.d("REU", "in run after req")
+
 
     }
 }
